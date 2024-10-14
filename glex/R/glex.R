@@ -114,7 +114,7 @@ glex.xgb.Booster <- function(object, x, max_interaction = NULL, features = NULL,
   # Calculate components
   res <- calc_components(trees, x, max_interaction, features, probFunction)
   res$intercept <- res$intercept + 0.5
-  
+
   # Return components
   res
 } 
@@ -186,7 +186,6 @@ glex.ranger <- function(object, x, max_interaction = NULL, features = NULL, prob
   
   # Calculate components
   res <- calc_components(trees, x, max_interaction, features, probFunction)
-  
   # Divide everything by the number of trees
   res$shap <- res$shap / object$num.trees
   res$m <- res$m / object$num.trees
@@ -314,17 +313,98 @@ tree_fun_emp <- function(tree, trees, x, all_S, probFunction = NULL) {
   m_all
 }
 
+
+tree_fun_emp_augmented <- function(
+  tree,
+  trees,
+  x,
+  all_S,
+  n_background_samples = NA
+) {
+  Tree <- NULL
+  Feature_num <- NULL
+  Node <- NULL
+  PathData <- NULL
+  # Calculate matrix
+  tree_info <- trees[Tree == tree, ]
+  if (is.na(n_background_samples)) {
+    background_samples <- x
+    n_background_samples <- nrow(x)
+  } else {
+    background_samples <- x[1:n_background_samples, ]
+  }
+  augmented <- augment_tree(tree_info, background_samples)
+  T <- setdiff(tree_info[, sort(unique(Feature_num))], 0L)
+  U <- subsets(T)
+  n <- n_background_samples
+
+  leaf_eval_fun <- function(node_idx, to_marginalize) {
+    to_explain <- setdiff(T, to_marginalize)
+    path_data <- augmented[Node == node_idx, PathData][[1]]
+
+    to_explain_list <- paste0(
+      sort(intersect(path_data$encountered, to_explain)),
+      collapse = "-"
+    )
+    if (to_explain_list == "")
+      to_explain_list <- "0"
+
+    p <- length(path_data$path_dat[[to_explain_list]]) / n
+    return(p)
+  }
+
+  mat <- recurseAugmented(
+    x, tree_info$Feature_num,
+    tree_info$Split,
+    tree_info$Yes,
+    tree_info$No,
+    tree_info$Quality,
+    integer(0),
+    U, 0, leaf_eval_fun
+  )
+
+  colnames(mat) <- vapply(U, function(u) {
+    paste(sort(colnames(x)[u]), collapse = ":")
+  }, FUN.VALUE = character(1))
+  # Init m matrix
+  m_all <- matrix(0, nrow = nrow(x), ncol = length(all_S))
+  colnames(m_all) <- vapply(all_S, function(s) {
+    paste(sort(colnames(x)[s]), collapse = ":")
+  }, FUN.VALUE = character(1))
+
+  # Calculate contribution, use only selected features and subsets with not more than max_interaction involved features
+  for (S in intersect(U, all_S)) {
+    colname <- paste(sort(colnames(x)[S]), collapse = ":")
+    if (nchar(colname) == 0) {
+      colnum <- 1
+    } else {
+      colnum <- which(colnames(m_all) == colname)
+    }
+    contribute(mat, m_all, S, T, U, colnum-1)
+  }
+
+  # Return m matrix
+  m_all
+
+}
+
 #' Internal tree function wrapper that returns the actual tree function
 #' @param trees data.table
 #' @param x observerations, matrix like data-structure
 #' @param all_S all combinations of interactions up to certain order
 #' @param probFunction probFunction that was supplied to \code{glex}
 tree_fun_wrapper <- function(trees, x, all_S, probFunction) {
+  if (is.data.frame(x)) {
+    x <- as.matrix(x)
+  }
+
   if (is.character(probFunction)) {
     if (probFunction == "path-dependent") {
       return(function(tree) tree_fun_path_dependent(tree, trees, x, all_S))
     } else if (probFunction == "empirical") {
       return(function(tree) tree_fun_emp(tree, trees, x, all_S, NULL))
+    } else if (startsWith(probFunction, "fastpd")) {
+      return(function(tree) tree_fun_emp_augmented(tree, trees, x, all_S, as.integer(strsplit(probFunction, "d")[[1]][2])))
     } else {
       stop("The probability function can either be 'path-dependent' or 'empirical' when specified as a string")
     }
@@ -338,13 +418,17 @@ tree_fun_wrapper <- function(trees, x, all_S, probFunction) {
 calc_components <- function(trees, x, max_interaction, features, probFunction = NULL) {
 
   # Convert features to numerics (leaf = 0)
+  if (startsWith(trees$Feature[1], "x")) {
   trees[, Feature_num := as.integer(factor(Feature, levels = c("Leaf", colnames(x)))) - 1L]
-  
+  } else {
+    trees[, Feature_num := as.integer(Feature) + 1]
+    trees[is.na(Feature_num), Feature_num := 0]
+  }
   # Calculate coverage from theoretical distribution, if given
   
   if (is.null(features)) {
     # All subsets S (that appear in any of the trees)
-    all_S <- unique(do.call(c,lapply(0:max(trees$Tree), function(tree) {
+    all_S <- unique(do.call(c, lapply(0:max(trees$Tree), function(tree) {
       subsets(trees[Tree == tree & Feature_num > 0, sort(unique(Feature_num))])
     })))
   } else {
