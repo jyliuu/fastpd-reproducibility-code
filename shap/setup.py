@@ -169,4 +169,4 @@ def try_run_setup(*, with_binary, with_cuda):
 
 # we seem to need this import guard for appveyor
 if __name__ == "__main__":
-    try_run_setup(with_binary=True, with_cuda=True)
+    try_run_setup(with_binary=True, with_cuda=False)
