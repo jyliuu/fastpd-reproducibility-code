@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shap"
+version = "0.46.1"
 description = "A unified approach to explain the output of any machine learning model."
 readme = "README.md"
 license = {text = "MIT License"}
@@ -41,7 +42,6 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "License :: OSI Approved :: MIT License",
 ]
-dynamic = ["version"]
 
 [project.optional-dependencies]
 plots = ["matplotlib", "ipython"]
@@ -188,10 +188,6 @@ packages = [
   'shap.models'
 ]
 
-[tool.setuptools_scm]
-version_file = "shap/_version.py"
-# Use "no-local-version" so dev releases are compatibile with PyPI
-local_scheme = "no-local-version"
 
 [tool.pytest.ini_options]
 addopts = "--mpl"
