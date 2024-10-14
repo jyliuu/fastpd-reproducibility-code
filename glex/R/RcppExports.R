@@ -25,3 +25,7 @@ contribute <- function(mat, m_all, S, T, T_subsets, colnum) {
     invisible(.Call(`_glex_contribute`, mat, m_all, S, T, T_subsets, colnum))
 }
 
+recurseAugmented <- function(x, feature, split, yes, no, quality, cover, U, node, leafEvalFunction) {
+    .Call(`_glex_recurseAugmented`, x, feature, split, yes, no, quality, cover, U, node, leafEvalFunction)
+}
+
