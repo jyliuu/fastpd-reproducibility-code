@@ -1,0 +1,7 @@
+.Rproj.user
+.Rcheck
+.Rhistory
+*.Rproj
+docs
+inst/doc
+README.html

@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^glex\.Rcheck$
+^glex.*\.tar\.gz$
+^glex.*\.tgz$
+^\.github$
+^attic$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^README\.Rmd$
+^codecov\.yml$
+^data-raw$
+^simulation$
