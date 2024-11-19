@@ -2,7 +2,7 @@
 # Code Supplement for 'Fast Estimation of Partial Dependence Functions using Trees'
 The following packages were cloned and modified for the simulations
 - [shap](https://github.com/shap/shap), cloned 14/10/2024, SHA: `215c58525127761208dd2c9754bd468a0295f537` on `master`
-- [glex](https://github.com/PlantedML/glex), cloned 14/10/2024, SHA: `985ca936523346161b1681a37071ddaa69f1b1f5` on `master`
+- [glex](https://github.com/PlantedML/glex), cloned 19/11/2024, SHA: `bb2be47ca2eb2a657095ecfd1b51877dfe0debe9` on `master`
 
 The folder `codeforsimulations` is a git repository, version history can be viewed with `git log`
 

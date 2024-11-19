@@ -1,3 +1,8 @@
+# glex 0.4.1
+
+* Added FastPD [arXiv](https://arxiv.org/abs/2410.13448) as default `probFunction` in `glex`.
+* Add rug plot to `plot_*_effect[s]` functions for continuous predictors, defaulting to showing a rug on the bottom side (`rug_side = "b"`).
+
 # glex 0.4.0
 
 * Add support for ranger objects to `glex()` ([PR#17](https://github.com/PlantedML/glex/pull/17)).
