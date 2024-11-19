@@ -28,8 +28,8 @@ To reproduce Figure `3`, follow these steps:
 - Install the modified SHAP package `pip install ../shap`
 - Install XGBoost if not exists `pip install xgboost`
 - Run `python benchmark_shap.py` to get the SHAP benchmarks (takes a long time, suggested to run this on a cluster)
-- Change working directory to `figure4` 
-- Run `plot_fig.r` to get the benchmark plots
+- Change working directory to `figure3` 
+- Run `plot_runtime.r` to get the benchmark plots
 
 ## SHAP package modifications
 - Removed `docs, data, javascript, notebooks, scripts

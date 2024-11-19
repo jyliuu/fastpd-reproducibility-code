@@ -1,8 +1,6 @@
-setwd("simulation")
 library(tidyverse)
 
-
-bench_times_background_shap <- read_csv("../simulation_runtime_shap_vs_glex/simulabench_times_shap.csv")
+bench_times_background_shap <- read_csv("../simulation_runtime_shap_vs_glex/bench_times_shap.csv")
 
 # Create a vector of file names
 file_names <- paste0("../simulation_runtime_shap_vs_glex/bench_times_fastpd", 1:8, ".rds")
@@ -31,7 +29,7 @@ p1 <- ggplot(to_plot, aes(x = N, y = median, color = method)) +
     x = "$n_b, n_f$",
     y = "Time (s)",
     # title = "Time complexity for background = foreground",
-    color = "Method"  # Set the legend title
+    color = "Method" # Set the legend title
   ) +
-  theme(legend.position = "right")  # Set the legend position to bottom
+  theme(legend.position = "right") # Set the legend position to bottom
 p1
