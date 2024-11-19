@@ -6,12 +6,11 @@ save_bench_res <- function(bench_res, save_name) {
 }
 
 benchmark_fastpd_xg_vs_N <- function(
-  xg,
-  dat,
-  N = (1:5) * 100,
-  min_iterations = 55,
-  save_name = NULL
-) {
+    xg,
+    dat,
+    N = (1:5) * 100,
+    min_iterations = 55,
+    save_name = NULL) {
   bench_res_increasing_N <- bench::press(
     N = N,
     {
@@ -33,7 +32,7 @@ benchmark_fastpd_xg_vs_N <- function(
 # Load the data
 xg <- import_xgboost_model("model.model")
 dataset <- import_data_from_csv("data.csv")
-
+colnames(dataset) <- paste0(0:6)
 # Function to run the benchmark for a given i
 run_benchmark <- function(i) {
   benchmark_fastpd_xg_vs_N(
