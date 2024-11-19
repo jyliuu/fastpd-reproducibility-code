@@ -15,7 +15,7 @@ benchmark_fastpd_xg_vs_N <- function(
     N = N,
     {
       bench::mark(
-        glex::glex(xg, dat[1:N, -8], probFunction = "fastpd"),
+        glex(xg, as.matrix(dat[1:N, -8])),
         check = FALSE,
         min_iterations = min_iterations,
         time_unit = "s"
