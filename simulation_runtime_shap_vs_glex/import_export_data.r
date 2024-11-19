@@ -20,15 +20,15 @@ import_xgboost_model <- function(file_path) {
 
 export_data_as_csv <- function(dataset, file_path) {
   # Save the data to a CSV file
-  data <- cbind(dataset$x, y = dataset$y) 
+  data <- cbind(dataset$x, y = dataset$y)
   write.csv(data, file = file_path, row.names = FALSE)
 
   # Print a success message
   cat("Data exported successfully to", file_path, "\n")
 }
 
-import_data_from_csv <- function(file_path, nrows = 2000) {
+import_data_from_csv <- function(file_path, ...) {
   # Load the data from a CSV file
-  data <- read.csv(file_path, nrows=nrows)
+  data <- read.csv(file_path, ...)
   data
 }
